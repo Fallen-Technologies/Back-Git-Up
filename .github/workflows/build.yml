@@ -27,11 +27,7 @@ jobs:
       run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
     - name: Compile dependencies with uv
-      working-directory: server
       run: uv pip compile pyproject.toml -o requirements.txt
-
-    - name: Copy requirements.txt for Docker build
-      run: cp requirements.txt .
 
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v1
