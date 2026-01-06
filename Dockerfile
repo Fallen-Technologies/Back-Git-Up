@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Install system deps if needed (e.g., for building wheels)
-RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y gcc git && rm -rf /var/lib/apt/lists/*
 
 # Copy pre-compiled requirements
 COPY requirements.txt .
