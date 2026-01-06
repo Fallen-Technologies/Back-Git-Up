@@ -59,11 +59,15 @@ def get_github_repos(token: str, verbose: bool = False) -> list[dict]:
 
 
 def clone_or_update_repo(
-    repo_data: dict, base_dir: Path, verbose: bool = False, pbar=None
+    repo_data: dict, base_dir: Path, token: str, verbose: bool = False, pbar=None
 ) -> bool:
     """Clone a repo if it doesn't exist, or pull updates if it does."""
     repo_name = repo_data["full_name"]  # e.g., "username/repo-name"
     clone_url = repo_data["clone_url"]
+
+    # Inject token into HTTPS URL for authentication
+    # Format: https://TOKEN@github.com/user/repo.git
+    authenticated_url = clone_url.replace("https://", f"https://{token}@")
 
     # Create nested directory structure (username/repo-name)
     repo_path = base_dir / repo_name
@@ -72,6 +76,7 @@ def clone_or_update_repo(
         tqdm.write(f"[VERBOSE] Repository: {repo_name}")
         tqdm.write(f"[VERBOSE] Clone URL: {clone_url}")
         tqdm.write(f"[VERBOSE] Target path: {repo_path}")
+        tqdm.write(f"[VERBOSE] Using authenticated URL for git operations")
 
     try:
         if repo_path.exists():
@@ -109,7 +114,7 @@ def clone_or_update_repo(
             repo_path.parent.mkdir(parents=True, exist_ok=True)
 
             result = subprocess.run(
-                ["git", "clone", clone_url, str(repo_path)],
+                ["git", "clone", authenticated_url, str(repo_path)],
                 capture_output=True,
                 text=True,
                 timeout=300,
@@ -204,7 +209,7 @@ def main():
                         f"\n[VERBOSE] ========== Processing {repo['full_name']} ==========="
                     )
 
-                if clone_or_update_repo(repo, base_dir, args.verbose, pbar):
+                if clone_or_update_repo(repo, base_dir, token, args.verbose, pbar):
                     success_count += 1
                 else:
                     fail_count += 1
