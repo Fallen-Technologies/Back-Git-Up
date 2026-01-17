@@ -23,12 +23,6 @@ Perfect for developers who want peace of mind knowing their code is safely backe
 
 ### Docker Setup
 
-Create a `.env` file:
-
-```env
-GITHUB_TOKEN=your_github_token_here
-```
-
 Docker Compose:
 
 Create a `compose.yml` file:
